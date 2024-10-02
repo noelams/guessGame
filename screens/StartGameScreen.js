@@ -1,7 +1,31 @@
-import { TextInput, StyleSheet, View } from "react-native";
-import PrimaryButtton from "../components/PrimaryButtton";
+import { TextInput, StyleSheet, View, Alert } from "react-native";
+import { useState } from "react";
+import PrimaryButtton from "../components/UI/PrimaryButtton";
+import Colors from "../Constants/colors";
 
-function StartGameScreen() {
+function StartGameScreen({ onPickedNumber }) {
+  const [enteredNumber, setEnteredNumber] = useState("");
+
+  function numberInputHandler(enteredText) {
+    setEnteredNumber(enteredText);
+  }
+
+  function resetInputHandler() {
+    setEnteredNumber("");
+  }
+
+  function confirmInputHandler() {
+    const chosenNumber = parseInt(enteredNumber);
+    if ((chosenNumber > 0 || chosenNumber < 100) && !isNaN(chosenNumber)) {
+      onPickedNumber(chosenNumber);
+      setEnteredNumber("");
+    } else {
+      Alert.alert("Invalid Number", "Number has to be between  1 and 99.", [
+        { text: "Okay", style: "destructive", onPress: resetInputHandler },
+      ]);
+    }
+  }
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -10,14 +34,19 @@ function StartGameScreen() {
         keyboardType="number-pad"
         autoCapitalize="none"
         autoCorrect={false}
+        onChangeText={numberInputHandler}
+        value={enteredNumber}
       />
 
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonContainer}>
-          <PrimaryButtton>Reset</PrimaryButtton>
+          <PrimaryButtton onPress={resetInputHandler}>Reset</PrimaryButtton>
         </View>
         <View style={styles.buttonContainer}>
-          <PrimaryButtton> confirm </PrimaryButtton>
+          <PrimaryButtton onPress={confirmInputHandler}>
+            {" "}
+            confirm{" "}
+          </PrimaryButtton>
         </View>
       </View>
     </View>
@@ -30,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 100,
     padding: 16,
-    backgroundColor: "#5b0f89",
+    backgroundColor: Colors.primary800,
     marginHorizontal: 24,
     borderRadius: 8,
     elevation: 4, //andriod specific
@@ -43,9 +72,9 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     fontSize: 32,
-    borderBottomColor: "#ddb52f",
+    borderBottomColor: Colors.accent500,
     borderBottomWidth: 2,
-    color: "#ddb52f",
+    color: Colors.accent500,
     fontWeight: "bold",
     marginVertical: 8,
     textAlign: "center",
